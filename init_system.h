@@ -1,5 +1,4 @@
 #ifndef INIT_HEADER
-#define INIT_HEADER
 
 #include <gst/gst.h>
 
@@ -8,6 +7,8 @@ typedef struct _dynamic_segment_data
 	int index;
 
 	GstElement * decoder;
+
+	int is_initialised;
 	
 	// audio elements
 	GstElement * a_convert;
@@ -36,9 +37,12 @@ typedef struct _control_data
 	GstElement * a_sink;
 } control_data;
 
-control_data * init_control_data(char ** src, int src_count);
+control_data * ss_init_control_data(int src_count);
 
 int ss_bin_add_control_data(control_data * ctrl_ptr);
 int ss_control_data_link_elements(control_data * ctrl_ptr);
 
+void ss_add_media_source(control_data * data, char * source_location, int comp_index);
+
+#define INIT_HEADER
 #endif 

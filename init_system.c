@@ -1,10 +1,12 @@
 #include "init_system.h"
 
+#include "signal_handler.h"
+
 #include <stdio.h>
 #include <gst/gst.h>
 
 int
-init_dynamic_comp(dynamic_comp * comp, char * filesource, int index)
+init_dynamic_comp(dynamic_comp * comp, int index)
 {
 	char buffer[255];
 	comp->index = index;
@@ -77,6 +79,8 @@ init_dynamic_comp(dynamic_comp * comp, char * filesource, int index)
 		return -1;
 	}
 
+	comp->is_initialised = 1;
+
 	return 0;
 }
 
@@ -132,7 +136,7 @@ int link_dynamic_comp(dynamic_comp * comp)
 
 
 control_data *
-init_control_data(char ** sources, int source_count)
+ss_init_control_data(int source_count)
 {
 	control_data * data = NULL;
 	
@@ -141,6 +145,11 @@ init_control_data(char ** sources, int source_count)
 
 	data->source_count = source_count;
 	data->comp = (dynamic_comp*) malloc(sizeof(dynamic_comp) * source_count);
+
+	for(int i = 0 ; i < data->source_count ; i++)
+	{
+		data->comp[i].is_initialised = 0;
+	}
 
 	data->pipeline = gst_pipeline_new("test-pipeline");
 
@@ -160,7 +169,7 @@ init_control_data(char ** sources, int source_count)
 
 	for(int i = 0 ; i < data->source_count ; i++)
 	{
-		if(init_dynamic_comp(&data->comp[i], NULL, i) < 0)
+		if(init_dynamic_comp(&data->comp[i], i) < 0)
 		{
 			return NULL;
 		} 
@@ -240,5 +249,34 @@ int ss_control_data_link_elements(control_data * data)
 	printf("component sync and switch linked\n");
 
 	return 0;
+}
+
+void 
+ss_add_media_source (control_data * data, char * src_location, int index)
+{
+	if(index >= data->source_count || index < 0)
+	{
+		g_print("Invalid source index paremeter passed\n");
+		return;
+	}
+
+	if(!data->comp[index].is_initialised)
+	{
+		g_print("Indexed dynamic component is not initialised.\n");
+		return;
+	}
+
+	dynamic_comp * dptr = &data->comp[index];
+
+  	g_object_set (dptr->decoder, "uri", src_location, NULL);
+	g_signal_connect(
+			dptr->decoder,	// element with callback
+			"pad-added",	// callback type
+			G_CALLBACK (signal_handler_pad_added),  // callback function
+			dptr); 			// auxillary data passed with the function
+
+	g_print("added source '%s' to comp[%d]\n", src_location, index);
+
+	return;
 }
 
