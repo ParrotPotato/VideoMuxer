@@ -295,7 +295,12 @@ void ss_play_pipeline(control_data * data)
 	data->bus = gst_pipeline_get_bus (GST_PIPELINE (data->pipeline));
 	gst_bus_add_watch (data->bus, signal_handler_bus , NULL);
 
+
+  	g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, data->v_switch);
+  	g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, data->a_switch);
+
 	gst_element_set_state (GST_ELEMENT(data->pipeline), GST_STATE_PLAYING);
+
 
 	g_main_loop_run(main_loop);
 

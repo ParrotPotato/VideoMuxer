@@ -6,25 +6,29 @@ int main(int argc, char **argv)
 {
 	gst_init(&argc, &argv);
 
-	control_data * data = ss_init_control_data(1);
+	control_data * data = ss_init_control_data(2);
 	if(data == NULL) 
 	{
 		return -1;
 	}
 
-  /* Adding new comments here for testing out the auto compile
-   * mechanics int SpaceVim
-   */
+	/* Adding new comments here for testing out the auto compile
+	 * mechanics int SpaceVim
+	 */
 
 	ss_bin_add_control_data(data);
 	ss_control_data_link_elements(data);
 
-	// add the source for each destination
+	/* These sources are personal local file 
+	 *
+	 * The source can be url (local file or a web url) 
+	 */
 
-	int comp_index = 0;
-	char * source_location = "https://www.freedesktop.org/software/gstreamer-sdk/data/media/sintel_trailer-480p.webm";
+	char * source_location_1 = "file:///home/nitesh/work/design-lab/StreamSwitch/data/test_day.mp4";
+	char * source_location_2 = "file:///home/nitesh/work/design-lab/StreamSwitch/data/test_code.mp4";
 
-	ss_add_media_source(data, source_location, comp_index);
+	ss_add_media_source(data, source_location_2, 0);
+	ss_add_media_source(data, source_location_1, 1);
 
 
 	/* Setting up error handling */ 

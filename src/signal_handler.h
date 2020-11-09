@@ -9,5 +9,7 @@ void signal_handler_pad_added(GstElement* src, GstPad* new_pad, dynamic_comp* co
 
 gboolean signal_handler_bus(GstBus * bus, GstMessage * message, gpointer data);
 
+gboolean signal_handler_switch_buffs (GstElement * video_switch);
+
 #define SIGNAL_HANDLER
 #endif
