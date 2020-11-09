@@ -4,6 +4,43 @@
 
 #include <gst/gst.h>
 
+gboolean
+signal_handler_bus(GstBus * bus, GstMessage * message, gpointer data)
+{
+  g_print ("Got %s message\n", GST_MESSAGE_TYPE_NAME (message));
+
+  switch (GST_MESSAGE_TYPE (message)) {
+    case GST_MESSAGE_ERROR:{
+      GError *err;
+      gchar *debug;
+
+      gst_message_parse_error (message, &err, &debug);
+      g_print ("Error: %s\n", err->message);
+      g_error_free (err);
+      g_free (debug);
+
+
+	  ss_quit_main_loop();
+
+      break;
+    }
+    case GST_MESSAGE_EOS:
+      /* end-of-stream */
+	  ss_quit_main_loop();
+      break;
+    default:
+      /* unhandled message */
+      break;
+  }
+
+  /* we want to be notified again the next time there is a message
+   * on the bus, so returning TRUE (FALSE means we want to stop watching
+   * for messages on the bus and our callback should not be called again)
+   */
+  return TRUE;
+}
+
+
 void 
 signal_handler_pad_added(GstElement* src, GstPad* new_pad, dynamic_comp* comp)
 {

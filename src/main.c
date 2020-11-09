@@ -26,5 +26,10 @@ int main(int argc, char **argv)
 
 	ss_add_media_source(data, source_location, comp_index);
 
+
+	/* Setting up error handling */ 
+
+	ss_play_pipeline(data);
+
 	return 0;
 }

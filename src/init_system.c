@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <gst/gst.h>
 
+GMainLoop * main_loop = NULL;
+
+void ss_quit_main_loop(void)
+{
+	return g_main_loop_quit(main_loop);
+}
+
 int
 init_dynamic_comp(dynamic_comp * comp, int index)
 {
@@ -138,6 +145,9 @@ int link_dynamic_comp(dynamic_comp * comp)
 control_data *
 ss_init_control_data(int source_count)
 {
+	// setting up main loop instance
+  	main_loop = g_main_loop_new (NULL, FALSE);
+
 	control_data * data = NULL;
 	
 	data = (control_data *) malloc(sizeof(control_data));
@@ -280,3 +290,17 @@ ss_add_media_source (control_data * data, char * src_location, int index)
 	return;
 }
 
+void ss_play_pipeline(control_data * data)
+{
+	data->bus = gst_pipeline_get_bus (GST_PIPELINE (data->pipeline));
+	gst_bus_add_watch (data->bus, signal_handler_bus , NULL);
+
+	gst_element_set_state (GST_ELEMENT(data->pipeline), GST_STATE_PLAYING);
+
+	g_main_loop_run(main_loop);
+
+	gst_element_set_state (GST_ELEMENT (data->pipeline), GST_STATE_READY);
+
+	gst_object_unref(data->bus);
+	gst_object_unref(GST_OBJECT (data->pipeline));
+}
