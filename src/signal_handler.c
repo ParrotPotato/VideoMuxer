@@ -1,6 +1,6 @@
 #include "signal_handler.h"
 
-#include "init_system.h"
+#include "switch_system.h"
 
 #include <gst/gst.h>
 
