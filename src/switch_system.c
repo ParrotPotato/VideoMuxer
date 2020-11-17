@@ -169,7 +169,7 @@ ss_init_control_data(int source_count)
 	
 	data->v_switch = gst_element_factory_make("input-selector", "v_switch");
 	printf("initialised v_switch\n");
-	data->v_sink   = gst_element_factory_make("autovideosink", "v_sink");
+	data->v_sink   = gst_element_factory_make("xvimagesink", "v_sink");
 	printf("initialised v_sink\n");
 
 	data->a_switch = gst_element_factory_make("input-selector", "a_switch");
@@ -295,12 +295,10 @@ void ss_play_pipeline(control_data * data)
 	data->bus = gst_pipeline_get_bus (GST_PIPELINE (data->pipeline));
 	gst_bus_add_watch (data->bus, signal_handler_bus , NULL);
 
-
   	g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, data->v_switch);
   	g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, data->a_switch);
 
 	gst_element_set_state (GST_ELEMENT(data->pipeline), GST_STATE_PLAYING);
-
 
 	g_main_loop_run(main_loop);
 
