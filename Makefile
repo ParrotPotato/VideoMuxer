@@ -2,7 +2,7 @@ BIN_DIR = ./bin
 SRC_DIR = ./src
 
 videoswitcher: $(BIN_DIR)/main.o $(BIN_DIR)/switch_system.o $(BIN_DIR)/signal_handler.o $(BIN_DIR)/gui_system.o 
-	gcc $(BIN_DIR)/main.o $(BIN_DIR)/switch_system.o $(BIN_DIR)/signal_handler.o -o videoswitcher `pkg-config --libs --cflags gstreamer-1.0 gstreamer-video-1.0 gtk+-3.0`
+	gcc $(BIN_DIR)/main.o $(BIN_DIR)/switch_system.o $(BIN_DIR)/signal_handler.o $(BIN_DIR)/gui_system.o -o videoswitcher `pkg-config --libs --cflags gstreamer-1.0 gstreamer-video-1.0 gtk+-3.0`
 
 
 $(BIN_DIR)/main.o: src/main.c

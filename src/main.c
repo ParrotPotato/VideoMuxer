@@ -1,4 +1,5 @@
 #include "switch_system.h"
+#include "gui_system.h"
 
 #include <gtk/gtk.h>
 #include <gst/gst.h>
@@ -105,8 +106,9 @@ int main(int argc, char **argv)
 		ss_add_media_source(data, streams[i], i);
 	}
 
+	gui_main(data);
 
-	ss_play_pipeline(data);
+//	ss_play_pipeline(data);
 
 	return 0;
 }

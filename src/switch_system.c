@@ -169,7 +169,7 @@ ss_init_control_data(int source_count)
 	
 	data->v_switch = gst_element_factory_make("input-selector", "v_switch");
 	printf("initialised v_switch\n");
-	data->v_sink   = gst_element_factory_make("xvimagesink", "v_sink");
+	data->v_sink   = gst_element_factory_make("autovideosink", "v_sink");
 	printf("initialised v_sink\n");
 
 	data->a_switch = gst_element_factory_make("input-selector", "a_switch");

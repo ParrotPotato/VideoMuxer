@@ -1,6 +1,7 @@
 #include "gui_system.h"
 
 #include "switch_system.h"
+#include "signal_handler.h"
 
 #include <gtk/gtk.h>
 #include <gst/gst.h>
@@ -315,7 +316,7 @@ static void application_cb (GstBus *bus, GstMessage *msg, window_handle *data) {
 
 #endif
 
-int gui_(control_data * data)
+int gui_main(control_data * data)
 {
 	window_handle * windata = (window_handle *) malloc(sizeof(window_handle));
 
@@ -329,6 +330,11 @@ int gui_(control_data * data)
 	GstBus *bus;
 
 	create_ui (windata);
+
+	// FIXME(nitesh) : Signal handler for 1 sec time should not be there 
+
+	//g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, windata->ctrl_data->v_switch);
+	//g_timeout_add (1000, (GSourceFunc) signal_handler_switch_buffs, windata->ctrl_data->a_switch);
 
 	/* Instruct the bus to emit signals for each received message, and connect to the interesting signals */
 	bus = gst_element_get_bus (windata->ctrl_data->pipeline);
@@ -344,12 +350,14 @@ int gui_(control_data * data)
 	ret = gst_element_set_state (windata->ctrl_data->pipeline, GST_STATE_PLAYING);
 	if (ret == GST_STATE_CHANGE_FAILURE) {
 		g_printerr ("Unable to set the pipeline to the playing state.\n");
-	//	gst_object_unref (data->ctrl_data->pipeline);
+		//	gst_object_unref (data->ctrl_data->pipeline);
 		return -1;
 	}
 
 	/* Register a function that GLib will call every second */
 	g_timeout_add_seconds (1, (GSourceFunc)refresh_ui, windata);
+
+	printf("Starting gtk main\n");
 
 	/* Start the GTK main loop. We will not regain control until gtk_main_quit is called. */
 	gtk_main ();
